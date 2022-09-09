@@ -19,5 +19,13 @@ namespace Lab1Test.Controllers
             var players = await _rosterRepository.GetPlayers();
             return View(new PlayersViewModel() { Players = players });
         }
+
+        [HttpGet]
+        [Route("[controller]/[action]/{position}")]
+        public async Task<IActionResult> GetPlayersByPosition(string position)
+        {
+            var players = await _rosterRepository.GetPlayersByPosition(position);
+            return View("GetPlayers", new PlayersViewModel() { Players = players });
+        }
     }
 }

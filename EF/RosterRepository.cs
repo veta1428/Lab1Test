@@ -13,5 +13,11 @@ namespace Lab1Test.EF
         {
             return await _context.Rosters.ToArrayAsync();
         }
+        public async Task<IEnumerable<Roster>> GetPlayersByPosition(string position)
+        {
+            return await _context.Rosters
+                .Where(pl => pl.Position == position)
+                .ToArrayAsync();
+        }
     }
 }

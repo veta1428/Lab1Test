@@ -1,5 +1,36 @@
 ﻿@model PlayersViewModel
 
+<div>
+    <input type="radio" name="filter" value="None" id="None" checked>
+    <label for="xs">None</label>
+</div>
+<div id="NoneBlock" style="display: none;">
+</div>
+<div>
+    <input type="radio" name="filter" value="Position" id="Position">
+    <label for="Position">Position</label>
+</div>
+<div id="PositionBlock" style="display: none;">
+    <label for="position">Choose position:</label>
+    <select id="position" name="position">
+        <option value="RW">RW</option>
+        <option value="LW">LW</option>
+        <option value="D">D</option>
+        <option value="C">C</option>
+        <option value="G">G</option>
+    </select>
+</div>
+<div>
+    <input type="radio" name="filter" value="Year" id="Year">
+    <label for="Yaer">Year</label>
+</div>
+<div id="YearBlock" style="display: none;">
+    <input placeholder="from" type="number" min="1980" max="2022">
+    <input placeholder="to" type="number" min="1980" max="2022">
+</div>
+<div>
+    <button id="searchBtn">Search</button>
+</div>
 <table>
     <tr>
         <td>PlayerId</td>
@@ -30,3 +61,60 @@
         </tr>
     }
 </table>
+
+<script>
+    //const btn = document.querySelector('#btn');
+    //const radioButtons = document.querySelectorAll('input[name="filter"]');
+    //btn.addEventListener("click", () => {
+
+    //    for (const radioButton of radioButtons) {
+    //        if (radioButton.checked) {
+    //            visibilityOn(radioButton.id + "Block")
+    //        } else {
+    //            visibilityOFF(radioButton.id + "Block")
+    //        }
+    //    }
+    //    console.log(radioButtons);
+    //    // show the output:
+    //    //output.innerText = selectedSize ? `You selected ${selectedSize}` : `You haven't selected any size`;
+    //});
+
+    function visibilityOn(id) {
+        console.log(id)
+        var x = document.getElementById(id);
+        console.log(x === null)
+        x.style.display = "block"
+    }
+
+    function visibilityOFF(id) {
+        var x = document.getElementById(id);
+        x.style.display = "none"
+    }
+
+    var radios = document.querySelectorAll('input[type=radio][name="filter"]');
+
+    function changeHandler(event) {
+        for (const radioButton of radios) {
+            visibilityOFF(radioButton.id + "Block")
+        }
+        if (this.checked) {
+            visibilityOn(this.id + "Block");
+        }
+    }
+
+    Array.prototype.forEach.call(radios, function(radio) {
+        radio.addEventListener('change', changeHandler);
+    });
+
+    const btn = document.querySelector('#searchBtn');
+
+    btn.addEventListener("click", function() {
+        if (document.getElementById("None").checked) {
+            window.location.href = "/Player/GetPlayers";
+        } else if (document.getElementById("Position").checked) {
+            console.log(document.getElementById("position"));
+            window.location.href = "/Player/GetPlayersByPosition/" + document.getElementById("position").value;
+        }
+        //window.location.href = "/Home/Index";
+    });
+</script>
