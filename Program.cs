@@ -1,3 +1,5 @@
+using Lab1Test.EF;
+
 namespace Lab1Test
 {
     public class Program
@@ -8,7 +10,9 @@ namespace Lab1Test
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            //builder.Services.A
+            builder.Services.AddDbContext<Lab1Context>();
+
+            builder.Services.AddScoped<IRosterRepository, RosterRepository>();
 
             var app = builder.Build();
 

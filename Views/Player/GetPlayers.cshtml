@@ -1,0 +1,32 @@
+﻿@model PlayersViewModel
+
+<table>
+    <tr>
+        <td>PlayerId</td>
+        <td>Jersey</td>
+        <td>FName</td>
+        <td>SName</td>
+        <td>Position</td>
+        <td>Birthday</td>
+        <td>Weight</td>
+        <td>Height</td>
+        <td>Birthcity</td>
+        <td>Birthstate</td>
+    </tr>
+    @foreach (var player in Model.Players)
+    {
+        <tr>
+            <td>@player.Playerid</td>
+            <td>@player.Jersey</td>
+            <td>@player.Fname</td>
+            <td>@player.Sname</td>
+            <td>@player.Position</td>
+            <td>@player.Birthday</td>
+            <td>@player.Weight</td>
+            <td>@player.Height</td>
+            <td>@player.Birthcity</td>
+            <td>@player.Birthstate</td>
+
+        </tr>
+    }
+</table>
