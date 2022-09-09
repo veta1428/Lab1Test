@@ -6,5 +6,7 @@ namespace Lab1Test.EF
     {
         public Task<IEnumerable<Roster>> GetPlayers();
         public Task<IEnumerable<Roster>> GetPlayersByPosition(string position);
+
+        public Task<IEnumerable<Roster>> GetPlayersByYearOfBirth(int from, int to);
     }
 }

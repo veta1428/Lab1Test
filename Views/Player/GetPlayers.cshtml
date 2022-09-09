@@ -25,8 +25,8 @@
     <label for="Yaer">Year</label>
 </div>
 <div id="YearBlock" style="display: none;">
-    <input placeholder="from" type="number" min="1980" max="2022">
-    <input placeholder="to" type="number" min="1980" max="2022">
+    <input placeholder="from" type="number" min="1980" max="2022" id="from">
+    <input placeholder="to" type="number" min="1980" max="2022" id="to">
 </div>
 <div>
     <button id="searchBtn">Search</button>
@@ -114,6 +114,8 @@
         } else if (document.getElementById("Position").checked) {
             console.log(document.getElementById("position"));
             window.location.href = "/Player/GetPlayersByPosition/" + document.getElementById("position").value;
+        } else if (document.getElementById("Year").checked) {
+            window.location.href = "/Player/GetPlayersByYearOfBirth/" + document.getElementById("from").value +"/"+document.getElementById("to").value;
         }
         //window.location.href = "/Home/Index";
     });

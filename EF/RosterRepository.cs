@@ -19,5 +19,11 @@ namespace Lab1Test.EF
                 .Where(pl => pl.Position == position)
                 .ToArrayAsync();
         }
+        public async Task<IEnumerable<Roster>> GetPlayersByYearOfBirth(int from, int to)
+        {
+            return await _context.Rosters
+                .Where(pl => pl.Birthday!.Value.Year >= from && pl.Birthday.Value.Year <= to)
+                .ToArrayAsync();
+        }
     }
 }
