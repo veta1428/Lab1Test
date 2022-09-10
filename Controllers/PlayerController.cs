@@ -22,10 +22,10 @@ namespace Lab1Test.Controllers
 
         [HttpGet]
         [Route("[controller]/[action]/{position}")]
-        public async Task<IActionResult> GetPlayersByPosition(string position)
+        public async Task<IActionResult> GetPlayersByPosition(Position position)
         {
             var players = await _rosterRepository.GetPlayersByPosition(position);
-            return View("GetPlayers", new PlayersViewModel() { Players = players });
+            return View("GetPlayers", new PlayersViewModel() { Players = players, SortType = SortType.Position, Position = position });
         }
 
         [HttpGet]
@@ -33,7 +33,15 @@ namespace Lab1Test.Controllers
         public async Task<IActionResult> GetPlayersByYearOfBirth(int from, int to)
         {
             var players = await _rosterRepository.GetPlayersByYearOfBirth(from, to);
-            return View("GetPlayers", new PlayersViewModel() { Players = players });
+            return View("GetPlayers", new PlayersViewModel() { Players = players, SortType = SortType.YearOfBirth, From = from, To = to });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditPlayer(EditPlayerModel model)
+        {
+            await _rosterRepository.Update(model.PlayerId, model.Birthday, model.Birthcity, model.Birthstate);
+            var players = await _rosterRepository.GetPlayers();
+            return View("GetPlayers", new PlayersViewModel() { Players = players, SortType = SortType.YearOfBirth });
         }
     }
 }

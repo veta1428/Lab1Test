@@ -10,6 +10,7 @@ namespace Lab1Test
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
             builder.Services.AddDbContext<Lab1Context>();
 
             builder.Services.AddScoped<IRosterRepository, RosterRepository>();
@@ -29,7 +30,7 @@ namespace Lab1Test
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Player}/{action=GetPlayers}");
 
             app.Run();
         }

@@ -5,7 +5,7 @@ namespace Lab1Test.EF
 {
     public partial class Roster
     {
-        public string Playerid { get; set; }
+        public string Playerid { get; set; } = null!;
         public int? Jersey { get; set; }
         public string? Fname { get; set; }
         public string? Sname { get; set; }

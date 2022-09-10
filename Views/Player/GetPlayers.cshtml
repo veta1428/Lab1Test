@@ -1,5 +1,76 @@
 ﻿@model PlayersViewModel
 
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    /* The popup form - hidden by default */
+    .form-popup {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        right: 15px;
+        border: 3px solid #f1f1f1;
+        z-index: 9;
+    }
+
+    /* Add styles to the form container */
+    .form-container {
+        max-width: 300px;
+        padding: 5px;
+        background-color: white;
+    }
+
+        /* Full-width input fields */
+        .form-container input[type=text], .form-container input[type=password] {
+            width: 100%;
+            padding: 0px;
+            margin: 5px 0 5px 0;
+            border: none;
+            background: #f1f1f1;
+        }
+
+            /* When the inputs get focus, do something */
+            .form-container input[type=text]:focus, .form-container input[type=password]:focus {
+                background-color: #ddd;
+                outline: none;
+            }
+
+        /* Set a style for the submit/login button */
+        .form-container .btn {
+            background-color: #04AA6D;
+            color: white;
+            padding: 16px 20px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        /* Add a red background color to the cancel button */
+        .form-container .cancel {
+            background-color: red;
+        }
+
+        /* Add some hover effects to buttons */
+        .form-container .btn:hover, .open-button:hover {
+            opacity: 1;
+        }
+</style>
+
+<div style="display: none;">
+    <p id="sortType">@Model.SortType</p>
+    <p id="positionFilter">@Model.Position</p>
+    <p id="fromFilter">@Model.From</p>
+    <p id="toFilter">@Model.To</p>
+</div>
+
 <div>
     <input type="radio" name="filter" value="None" id="None" checked>
     <label for="xs">None</label>
@@ -13,11 +84,11 @@
 <div id="PositionBlock" style="display: none;">
     <label for="position">Choose position:</label>
     <select id="position" name="position">
-        <option value="RW">RW</option>
-        <option value="LW">LW</option>
-        <option value="D">D</option>
-        <option value="C">C</option>
-        <option value="G">G</option>
+        <option value="RW" id="RW">RW</option>
+        <option value="LW" id="LW">LW</option>
+        <option value="D" id="D">D</option>
+        <option value="C" id="C">C</option>
+        <option value="G" id="G">G</option>
     </select>
 </div>
 <div>
@@ -47,39 +118,92 @@
     @foreach (var player in Model.Players)
     {
         <tr>
-            <td>@player.Playerid</td>
-            <td>@player.Jersey</td>
-            <td>@player.Fname</td>
-            <td>@player.Sname</td>
-            <td>@player.Position</td>
-            <td>@player.Birthday</td>
-            <td>@player.Weight</td>
-            <td>@player.Height</td>
-            <td>@player.Birthcity</td>
-            <td>@player.Birthstate</td>
+            <td name="@player.Playerid">@player.Playerid</td>
+            <td name="@player.Playerid">@player.Jersey</td>
+            <td name="@player.Playerid">@player.Fname</td>
+            <td name="@player.Playerid">@player.Sname</td>
+            <td name="@player.Playerid">@player.Position</td>
+            <td name="@player.Playerid">@player.Birthday</td>
+            <td name="@player.Playerid">@player.Weight</td>
+            <td name="@player.Playerid">@player.Height</td>
+            <td name="@player.Playerid">@player.Birthcity</td>
+            <td name="@player.Playerid">@player.Birthstate</td>
+            <td>
+                <button id="@player.Playerid" name="editButton">Edit</button>
+            </td>
 
         </tr>
     }
 </table>
 
+<div class="form-popup" id="myForm">
+    <form class="form-container" method="post" asp-controller="Player" asp-action="EditPlayer">
+        <h1>Edit</h1>
+
+        <label for="PlayerId"><b>PlayerId</b></label>
+        <input id="PlayerIdInput" type="text" name="PlayerId" required hidden>
+
+        <label for="Jersey"><b>Jersey</b></label>
+        <input id="JerseyInput" type="text" name="Jersey" disabled>
+
+        <label for="Fname"><b>Fname</b></label>
+        <input id="FnameInput" type="text" name="Fname" disabled>
+
+        <label for="Sname"><b>Sname</b></label>
+        <input id="SnameInput" type="text" name="Sname" disabled>
+
+        <label for="Position"><b>Position</b></label>
+        <input id="PositionInput" type="text" name="Position" disabled>
+
+        <label for="Birthday"><b>Birthday</b></label>
+        <input id="BirthdayInput" type="date" name="Birthday" required>
+
+        <label for="Weight"><b>Weight</b></label>
+        <input id="WeightInput" type="text" name="Weight" disabled>
+
+        <label for="Height"><b>Height</b></label>
+        <input id="HeightInput" type="text" name="Height" disabled>
+
+        <label for="Birthcity"><b>Birthcity</b></label>
+        <input id="BirthcityInput" type="text" name="Birthcity" required>
+
+        <label for="Birthstate"><b>Birthstate</b></label>
+        <input id="BirthstateInput" type="text" name="Birthstate" required>
+
+         <input type="submit" value="Save" />
+    </form>
+</div>
+
+
 <script>
-    //const btn = document.querySelector('#btn');
-    //const radioButtons = document.querySelectorAll('input[name="filter"]');
-    //btn.addEventListener("click", () => {
+    window.addEventListener("load", function() {
+        console.log('d');
+        var sortTypeElement = document.getElementById('sortType')
+        var sortType = sortTypeElement.innerHTML;
+        console.log()
+        if(sortType === 'Position'){
+            var selectPositionElement = document.getElementById('position')
+            var positionId = document.getElementById('positionFilter').innerHTML
+            document.getElementById(positionId).selected = positionId
+            document.getElementById('Position').checked = true
+            visibilityOn('PositionBlock')
+        } else if (sortType === 'YearOfBirth') {
+            var fromYearElement = document.getElementById('from')
+            var toYearElement = document.getElementById('to')
+            document.getElementById('Year').checked = true
+            fromYearElement.value = document.getElementById('fromFilter').innerHTML
+            toYearElement.value = document.getElementById('toFilter').innerHTML
+            visibilityOn('YearBlock')
+        }
 
-    //    for (const radioButton of radioButtons) {
-    //        if (radioButton.checked) {
-    //            visibilityOn(radioButton.id + "Block")
-    //        } else {
-    //            visibilityOFF(radioButton.id + "Block")
-    //        }
-    //    }
-    //    console.log(radioButtons);
-    //    // show the output:
-    //    //output.innerText = selectedSize ? `You selected ${selectedSize}` : `You haven't selected any size`;
-    //});
+        presetFilters();
+    });
 
-    function visibilityOn(id) {
+    function presetFilters(){
+
+    }
+
+        function visibilityOn(id) {
         console.log(id)
         var x = document.getElementById(id);
         console.log(x === null)
@@ -115,8 +239,41 @@
             console.log(document.getElementById("position"));
             window.location.href = "/Player/GetPlayersByPosition/" + document.getElementById("position").value;
         } else if (document.getElementById("Year").checked) {
-            window.location.href = "/Player/GetPlayersByYearOfBirth/" + document.getElementById("from").value +"/"+document.getElementById("to").value;
+            window.location.href = "/Player/GetPlayersByYearOfBirth/" + document.getElementById("from").value + "/" + document.getElementById("to").value;
         }
         //window.location.href = "/Home/Index";
     });
+
+    var editButtons = document.querySelectorAll('button[name="editButton"]');
+
+    Array.prototype.forEach.call(editButtons, function(radio) {
+        radio.addEventListener('click', editHandler);
+    });
+
+    function editHandler(event) {
+        console.log(this)
+        presetFormData(this.id)
+    }
+
+    function presetFormData(playerId) {
+        var inputsName = ['PlayerIdInput', 'JerseyInput', 'FnameInput', "SnameInput", "PositionInput", "BirthdayInput",
+            "WeightInput", "HeightInput", "BirthcityInput", "BirthstateInput"]
+
+        var info = document.querySelectorAll('td[name="' + playerId + '"]');
+
+        for (var i = 0; i < inputsName.length; i++) {
+            var input = document.getElementById(inputsName[i]);
+            input.value = info[i].innerHTML;
+        }
+
+        var form = document.getElementById('myForm');
+        form.style.display = 'block'
+    }
+
+    function cancelEdit() {
+        var form = document.getElementById('myForm');
+        form.style.display = 'none'
+    }
+
+    console.log(editButtons);
 </script>
