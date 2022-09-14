@@ -137,7 +137,7 @@
 </table>
 
 <div class="form-popup" id="myForm">
-    <form class="form-container" method="post" asp-controller="Player" asp-action="EditPlayer">
+    <form class="form-container" name="myForm" method="post" asp-controller="Player" asp-action="EditPlayer" onsubmit="validateForm()>
         <h1>Edit</h1>
 
         <label for="PlayerId"><b>PlayerId</b></label>
@@ -168,9 +168,9 @@
         <input id="BirthcityInput" type="text" name="Birthcity" required>
 
         <label for="Birthstate"><b>Birthstate</b></label>
-        <input id="BirthstateInput" type="text" name="Birthstate" required>
+        <input id="BirthstateInput" type="text" name="Birthstate" required maxlength="2">
 
-         <input type="submit" value="Save" />
+         <button id="submit">Save</button>
     </form>
 </div>
 
@@ -275,5 +275,10 @@
         form.style.display = 'none'
     }
 
-    console.log(editButtons);
+    const btnSubmit = document.getElementById('submit');
+
+    btnSubmit.addEventListener("click", function() {
+        console.log(document.getElementById('BirthdayInput'));
+    });
+
 </script>
