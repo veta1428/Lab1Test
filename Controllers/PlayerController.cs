@@ -30,7 +30,7 @@ namespace Lab1Test.Controllers
 
         [HttpGet]
         [Route("[controller]/[action]/{from}/{to}")]
-        public async Task<IActionResult> GetPlayersByYearOfBirth(int from, int to)
+        public async Task<IActionResult> GetPlayersByYearOfBirth(int? from, int? to)
         {
             var players = await _rosterRepository.GetPlayersByYearOfBirth(from, to);
             return View("GetPlayers", new PlayersViewModel() { Players = players, SortType = SortType.YearOfBirth, From = from, To = to });

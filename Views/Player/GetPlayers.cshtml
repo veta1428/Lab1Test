@@ -1,12 +1,16 @@
 ﻿@model PlayersViewModel
 
 <style>
+    .column {
+        min-width: 100px;
+    }
+
     body {
         font-family: Arial, Helvetica, sans-serif;
     }
 
-    * {
-        box-sizing: border-box;
+    .element {
+        margin-top: 30px;
     }
 
     /* The popup form - hidden by default */
@@ -29,10 +33,6 @@
         /* Full-width input fields */
         .form-container input[type=text], .form-container input[type=password] {
             width: 100%;
-            padding: 0px;
-            margin: 5px 0 5px 0;
-            border: none;
-            background: #f1f1f1;
         }
 
             /* When the inputs get focus, do something */
@@ -42,16 +42,6 @@
             }
 
         /* Set a style for the submit/login button */
-        .form-container .btn {
-            background-color: #04AA6D;
-            color: white;
-            padding: 16px 20px;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 10px;
-            opacity: 0.8;
-        }
 
         /* Add a red background color to the cancel button */
         .form-container .cancel {
@@ -64,6 +54,7 @@
         }
 </style>
 
+<form class="form-container" id="formEdit" method="post" asp-controller="Player" asp-action="GetFilteredPlayers">
 <div style="display: none;">
     <p id="sortType">@Model.SortType</p>
     <p id="positionFilter">@Model.Position</p>
@@ -99,45 +90,49 @@
     <input placeholder="from" type="number" min="1980" max="2022" id="from">
     <input placeholder="to" type="number" min="1980" max="2022" id="to">
 </div>
-<div>
-    <button id="searchBtn">Search</button>
+<div style="margin-bottom: 30px;" class="element">
+    <button id="searchBtn" class="btn btn-primary">Search</button>
 </div>
-<table>
-    <tr>
-        <td>PlayerId</td>
-        <td>Jersey</td>
-        <td>FName</td>
-        <td>SName</td>
-        <td>Position</td>
-        <td>Birthday</td>
-        <td>Weight</td>
-        <td>Height</td>
-        <td>Birthcity</td>
-        <td>Birthstate</td>
-    </tr>
-    @foreach (var player in Model.Players)
-    {
-        <tr>
-            <td name="@player.Playerid">@player.Playerid</td>
-            <td name="@player.Playerid">@player.Jersey</td>
-            <td name="@player.Playerid">@player.Fname</td>
-            <td name="@player.Playerid">@player.Sname</td>
-            <td name="@player.Playerid">@player.Position</td>
-            <td name="@player.Playerid">@player.Birthday</td>
-            <td name="@player.Playerid">@player.Weight</td>
-            <td name="@player.Playerid">@player.Height</td>
-            <td name="@player.Playerid">@player.Birthcity</td>
-            <td name="@player.Playerid">@player.Birthstate</td>
-            <td>
-                <button id="@player.Playerid" name="editButton">Edit</button>
-            </td>
+</form>
 
+<div style="overflow-x:auto;">
+    <table>
+        <tr>
+            <td>PlayerId</td>
+            <td>Jersey</td>
+            <td>FName</td>
+            <td>SName</td>
+            <td>Position</td>
+            <td>Birthday</td>
+            <td>Weight</td>
+            <td>Height</td>
+            <td>Birthcity</td>
+            <td>Birthstate</td>
         </tr>
-    }
-</table>
+        @foreach (var player in Model.Players)
+        {
+            <tr>
+                <td class="column" name="@player.Playerid">@player.Playerid</td>
+                <td class="column" name="@player.Playerid">@player.Jersey</td>
+                <td class="column" name="@player.Playerid">@player.Fname</td>
+                <td class="column" name="@player.Playerid">@player.Sname</td>
+                <td class="column" name="@player.Playerid">@player.Position</td>
+                <td class="column" name="@player.Playerid">@String.Format("{0:MM/dd/yyyy}", player.Birthday)</td>
+                <td class="column" name="@player.Playerid">@player.Weight</td>
+                <td class="column" name="@player.Playerid">@player.Height</td>
+                <td class="column" name="@player.Playerid">@player.Birthcity</td>
+                <td class="column" name="@player.Playerid">@player.Birthstate</td>
+                <td>
+                    <button id="@player.Playerid" name="editButton" class="btn btn-outline-primary">Edit</button>
+                </td>
+
+            </tr>
+        }
+    </table>
+</div>
 
 <div class="form-popup" id="myForm">
-    <form class="form-container" name="myForm" method="post" asp-controller="Player" asp-action="EditPlayer" onsubmit="validateForm()>
+    <form class="form-container" id="formEdit" method="post" asp-controller="Player" asp-action="EditPlayer">
         <h1>Edit</h1>
 
         <label for="PlayerId"><b>PlayerId</b></label>
@@ -170,8 +165,10 @@
         <label for="Birthstate"><b>Birthstate</b></label>
         <input id="BirthstateInput" type="text" name="Birthstate" required maxlength="2">
 
-         <button id="submit">Save</button>
+
     </form>
+    <button id="submitButton" class="btn btn-primary">Save</button>
+    <button onclick="cancelEdit()" class="btn btn-primary">Cancel</button>
 </div>
 
 
@@ -181,7 +178,7 @@
         var sortTypeElement = document.getElementById('sortType')
         var sortType = sortTypeElement.innerHTML;
         console.log()
-        if(sortType === 'Position'){
+        if (sortType === 'Position') {
             var selectPositionElement = document.getElementById('position')
             var positionId = document.getElementById('positionFilter').innerHTML
             document.getElementById(positionId).selected = positionId
@@ -199,11 +196,11 @@
         presetFilters();
     });
 
-    function presetFilters(){
+    function presetFilters() {
 
     }
 
-        function visibilityOn(id) {
+    function visibilityOn(id) {
         console.log(id)
         var x = document.getElementById(id);
         console.log(x === null)
@@ -239,7 +236,15 @@
             console.log(document.getElementById("position"));
             window.location.href = "/Player/GetPlayersByPosition/" + document.getElementById("position").value;
         } else if (document.getElementById("Year").checked) {
-            window.location.href = "/Player/GetPlayersByYearOfBirth/" + document.getElementById("from").value + "/" + document.getElementById("to").value;
+            let fromSegment = document.getElementById("from").value
+            if (fromSegment === undefined) {
+                fromSegment = "null"
+            }
+            let toSegment = document.getElementById("to").value
+            if (toSegment === undefined) {
+                toSegment = "null"
+            }
+            window.location.href = "/Player/GetPlayersByYearOfBirth/" + fromSegment + "/" + toSegment;
         }
         //window.location.href = "/Home/Index";
     });
@@ -275,10 +280,29 @@
         form.style.display = 'none'
     }
 
-    const btnSubmit = document.getElementById('submit');
+    const btnSubmit = document.getElementById('submitButton');
 
     btnSubmit.addEventListener("click", function() {
-        console.log(document.getElementById('BirthdayInput'));
+        console.log('clicked');
+        var inputDate = document.getElementById('BirthdayInput').value.substring(0, 4);
+        var from = document.getElementById('from').value;
+        var to = document.getElementById('to').value;
+
+        var url = window.location.href;
+        var segments = url.split("/");
+        console.log(segments[6])
+        console.log(segments[5]);
+
+        if (segments[4] === 'GetPlayersByYearOfBirth') {
+            if (segments[5] > inputDate || segments[6] < inputDate) {
+                alert('Invalid year of birth value!');
+            } else {
+                console.log('submitting');
+                document.getElementById('formEdit').submit();
+            }
+        } else {
+            document.getElementById('formEdit').submit();
+        }
     });
 
 </script>

@@ -21,11 +21,30 @@ namespace Lab1Test.EF
 
             return await query.ToArrayAsync();
         }
-        public async Task<IEnumerable<Roster>> GetPlayersByYearOfBirth(int from, int to)
+        public async Task<IEnumerable<Roster>> GetPlayersByYearOfBirth(int? from, int? to)
         {
-            return await _context.Rosters
+            if (from == null && to == null)
+            {
+                return await GetPlayers();
+            }
+            else if (from == null)
+            {
+                return await _context.Rosters
+               .Where(pl => pl.Birthday.Value.Year <= to)
+               .ToArrayAsync();
+            }
+            else if (to == null)
+            {
+                return await _context.Rosters
+               .Where(pl => pl.Birthday!.Value.Year >= from)
+               .ToArrayAsync();
+            } else
+            {
+                return await _context.Rosters
                 .Where(pl => pl.Birthday!.Value.Year >= from && pl.Birthday.Value.Year <= to)
                 .ToArrayAsync();
+            }
+            
         }
 
         // never do it again
