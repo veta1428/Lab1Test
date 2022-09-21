@@ -6,6 +6,7 @@
         LW,
         C,
         D,
-        G
+        G,
+        None
     }
 }

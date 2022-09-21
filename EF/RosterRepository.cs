@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Lab1Test.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lab1Test.EF
 {
@@ -64,6 +65,15 @@ namespace Lab1Test.EF
         public async Task<Roster> GetById(string id)
         {
             return await _context.Rosters.FirstAsync(pl => pl.Playerid == id);
+        }
+
+        public async Task<IEnumerable<Roster>> GetFilteredPlayersAsync(FilterQuery filter)
+        {
+            return await _context.Rosters
+                .Where(r => (filter.From == null) || (r.Birthday == null)  || (filter.From <= r.Birthday.Value.Year))
+                .Where(r => (filter.To == null) || (r.Birthday == null) || (filter.To >= r.Birthday.Value.Year))
+                .Where(r => (filter.Position == null) || (r.Position == null) || (filter.Position.ToString() == r.Position))
+                .ToArrayAsync();
         }
     }
 }

@@ -1,8 +1,17 @@
 ﻿@model PlayersViewModel
 
 <style>
-    .column {
+
+    td {
         min-width: 100px;
+    }
+
+    div.block {
+        margin-bottom: 20px;
+    }
+
+    div.block-small {
+        margin-bottom: 10px;
     }
 
     body {
@@ -25,7 +34,7 @@
 
     /* Add styles to the form container */
     .form-container {
-        max-width: 300px;
+        max-width: 500px;
         padding: 5px;
         background-color: white;
     }
@@ -54,116 +63,179 @@
         }
 </style>
 
-<form class="form-container" id="formEdit" method="post" asp-controller="Player" asp-action="GetFilteredPlayers">
-<div style="display: none;">
-    <p id="sortType">@Model.SortType</p>
-    <p id="positionFilter">@Model.Position</p>
-    <p id="fromFilter">@Model.From</p>
-    <p id="toFilter">@Model.To</p>
+@{
+    List<SelectListItem> listItems = new List<SelectListItem>();
+    listItems.Add(new SelectListItem
+            {
+                Text = "RW",
+                Value = "RW",
+                Selected = @Model.Position == Lab1Test.EF.Position.RW,
+            });
+    listItems.Add(new SelectListItem
+            {
+                Text = "LW",
+                Value = "LW",
+                Selected = @Model.Position == Lab1Test.EF.Position.LW,
+            });
+    listItems.Add(new SelectListItem
+            {
+                Text = "C",
+                Value = "C",
+                Selected = @Model.Position == Lab1Test.EF.Position.C,
+            });
+    listItems.Add(new SelectListItem
+            {
+                Text = "D",
+                Value = "D",
+                Selected = @Model.Position == Lab1Test.EF.Position.D,
+            });
+    listItems.Add(new SelectListItem
+            {
+                Text = "G",
+                Value = "G",
+                Selected = @Model.Position == Lab1Test.EF.Position.G,
+            });
+}
+<div width="50%">
+    <form id="formFilter" method="get" asp-controller="Player" asp-action="GetFilteredPlayers">
+        <div class="block">
+            <label><b>Position</b></label>
+            <div>
+                @Html.DropDownListFor(model => model.Position, listItems, " ", new { @class="form-control"})
+            </div>
+        </div>
+
+
+        <div class="block">
+            <div>
+                <label for="From"><b>From</b></label>
+            </div>
+
+            <input type="number" name="From" value="@Model.From" class="form-control" size="20" placeholder="From">
+        </div>
+
+        <div class="block">
+            <div>
+                <label for="To"><b>To</b></label>
+            </div>
+
+            <input type="number" name="To" value="@Model.To" class="form-control" placeholder="To">
+        </div>
+        <div class="block">
+            <input type="submit" value="Search" class="btn btn-primary" />
+        </div>
+
+    </form>
 </div>
 
-<div>
-    <input type="radio" name="filter" value="None" id="None" checked>
-    <label for="xs">None</label>
-</div>
-<div id="NoneBlock" style="display: none;">
-</div>
-<div>
-    <input type="radio" name="filter" value="Position" id="Position">
-    <label for="Position">Position</label>
-</div>
-<div id="PositionBlock" style="display: none;">
-    <label for="position">Choose position:</label>
-    <select id="position" name="position">
-        <option value="RW" id="RW">RW</option>
-        <option value="LW" id="LW">LW</option>
-        <option value="D" id="D">D</option>
-        <option value="C" id="C">C</option>
-        <option value="G" id="G">G</option>
-    </select>
-</div>
-<div>
-    <input type="radio" name="filter" value="Year" id="Year">
-    <label for="Yaer">Year</label>
-</div>
-<div id="YearBlock" style="display: none;">
-    <input placeholder="from" type="number" min="1980" max="2022" id="from">
-    <input placeholder="to" type="number" min="1980" max="2022" id="to">
-</div>
-<div style="margin-bottom: 30px;" class="element">
-    <button id="searchBtn" class="btn btn-primary">Search</button>
-</div>
-</form>
 
 <div style="overflow-x:auto;">
-    <table>
-        <tr>
-            <td>PlayerId</td>
-            <td>Jersey</td>
-            <td>FName</td>
-            <td>SName</td>
-            <td>Position</td>
-            <td>Birthday</td>
-            <td>Weight</td>
-            <td>Height</td>
-            <td>Birthcity</td>
-            <td>Birthstate</td>
-        </tr>
-        @foreach (var player in Model.Players)
-        {
-            <tr>
-                <td class="column" name="@player.Playerid">@player.Playerid</td>
-                <td class="column" name="@player.Playerid">@player.Jersey</td>
-                <td class="column" name="@player.Playerid">@player.Fname</td>
-                <td class="column" name="@player.Playerid">@player.Sname</td>
-                <td class="column" name="@player.Playerid">@player.Position</td>
-                <td class="column" name="@player.Playerid">@String.Format("{0:MM/dd/yyyy}", player.Birthday)</td>
-                <td class="column" name="@player.Playerid">@player.Weight</td>
-                <td class="column" name="@player.Playerid">@player.Height</td>
-                <td class="column" name="@player.Playerid">@player.Birthcity</td>
-                <td class="column" name="@player.Playerid">@player.Birthstate</td>
-                <td>
-                    <button id="@player.Playerid" name="editButton" class="btn btn-outline-primary">Edit</button>
-                </td>
 
+    @if (Model.Players.Count() == 0)
+    {
+        <p>No information matched your request found(</p>
+    }
+    else
+    {
+        <table>
+            <tr>
+                <td>PlayerId</td>
+                <td>Jersey</td>
+                <td>FName</td>
+                <td>SName</td>
+                <td>Position</td>
+                <td>Birthday</td>
+                <td>Weight</td>
+                <td>Height</td>
+                <td>Birthcity</td>
+                <td>Birthstate</td>
             </tr>
-        }
-    </table>
+
+
+            @foreach (var player in Model.Players)
+            {
+                <tr>
+                    <td name="@player.Playerid">@player.Playerid</td>
+                    <td name="@player.Playerid">@player.Jersey</td>
+                    <td name="@player.Playerid">@player.Fname</td>
+                    <td name="@player.Playerid">@player.Sname</td>
+                    <td name="@player.Playerid">@player.Position</td>
+                    <td name="@player.Playerid">@String.Format("{0:MM/dd/yyyy}", player.Birthday)</td>
+                    <td name="@player.Playerid">@player.Weight</td>
+                    <td name="@player.Playerid">@player.Height</td>
+                    <td name="@player.Playerid">@player.Birthcity</td>
+                    <td name="@player.Playerid">@player.Birthstate</td>
+                    <td>
+                        <button id="@player.Playerid" name="editButton" class="btn btn-outline-primary">Edit</button>
+                    </td>
+
+                </tr>
+            }
+        </table>
+    }
 </div>
 
 <div class="form-popup" id="myForm">
     <form class="form-container" id="formEdit" method="post" asp-controller="Player" asp-action="EditPlayer">
         <h1>Edit</h1>
 
-        <label for="PlayerId"><b>PlayerId</b></label>
-        <input id="PlayerIdInput" type="text" name="PlayerId" required hidden>
+        <div>
+            <input id="FromInput" type="number" name="From" value="@Model.From" required hidden>
+        </div>
 
-        <label for="Jersey"><b>Jersey</b></label>
-        <input id="JerseyInput" type="text" name="Jersey" disabled>
+        <div>
+            <input id="ToInput" type="number" name="To" value="@Model.To" required hidden>
+        </div>
 
-        <label for="Fname"><b>Fname</b></label>
-        <input id="FnameInput" type="text" name="Fname" disabled>
+        @Html.DropDownListFor(model => model.Position, listItems, " ", new {@hidden=true})
 
-        <label for="Sname"><b>Sname</b></label>
-        <input id="SnameInput" type="text" name="Sname" disabled>
+        <input id="PlayerIdInput" type="text" name="PlayerId" required hidden class="form-control">
 
-        <label for="Position"><b>Position</b></label>
-        <input id="PositionInput" type="text" name="Position" disabled>
 
-        <label for="Birthday"><b>Birthday</b></label>
-        <input id="BirthdayInput" type="date" name="Birthday" required>
+        <div class="block-small">
+            <label for="Jersey"><b>Jersey</b></label>
+            <input id="JerseyInput" type="text" name="Jersey" disabled class="form-control">
+        </div>
 
-        <label for="Weight"><b>Weight</b></label>
-        <input id="WeightInput" type="text" name="Weight" disabled>
+        <div class="block-small">
+            <label for="Fname"><b>Fname</b></label>
+            <input id="FnameInput" type="text" name="Fname" disabled class="form-control">
+        </div>
 
-        <label for="Height"><b>Height</b></label>
-        <input id="HeightInput" type="text" name="Height" disabled>
+        <div class="block-small">
+            <label for="Sname"><b>Sname</b></label>
+            <input id="SnameInput" type="text" name="Sname" disabled class="form-control">
+        </div>
 
-        <label for="Birthcity"><b>Birthcity</b></label>
-        <input id="BirthcityInput" type="text" name="Birthcity" required>
+        <div class="block-small">
+            <label for="Position"><b>Position</b></label>
+            <input id="PositionInput" type="text" name="Position" disabled class="form-control">
+        </div>
 
-        <label for="Birthstate"><b>Birthstate</b></label>
-        <input id="BirthstateInput" type="text" name="Birthstate" required maxlength="2">
+        <div class="block-small">
+            <label for="Birthday"><b>Birthday</b></label>
+            <input id="BirthdayInput" type="date" name="Birthday" required class="form-control">
+        </div>
+
+        <div class="block-small">
+            <label for="Weight"><b>Weight</b></label>
+            <input id="WeightInput" type="text" name="Weight" disabled class="form-control">
+        </div>
+
+        <div class="block-small">
+            <label for="Height"><b>Height</b></label>
+            <input id="HeightInput" type="text" name="Height" disabled class="form-control">
+        </div>
+
+        <div class="block-small">
+            <label for="Birthcity"><b>Birthcity</b></label>
+            <input id="BirthcityInput" type="text" name="Birthcity" required class="form-control">
+        </div>
+
+        <div class="block-small">
+            <label for="Birthstate"><b>Birthstate</b></label>
+            <input id="BirthstateInput" type="text" name="Birthstate" required maxlength="2" class="form-control">
+        </div>
 
 
     </form>
@@ -173,81 +245,6 @@
 
 
 <script>
-    window.addEventListener("load", function() {
-        console.log('d');
-        var sortTypeElement = document.getElementById('sortType')
-        var sortType = sortTypeElement.innerHTML;
-        console.log()
-        if (sortType === 'Position') {
-            var selectPositionElement = document.getElementById('position')
-            var positionId = document.getElementById('positionFilter').innerHTML
-            document.getElementById(positionId).selected = positionId
-            document.getElementById('Position').checked = true
-            visibilityOn('PositionBlock')
-        } else if (sortType === 'YearOfBirth') {
-            var fromYearElement = document.getElementById('from')
-            var toYearElement = document.getElementById('to')
-            document.getElementById('Year').checked = true
-            fromYearElement.value = document.getElementById('fromFilter').innerHTML
-            toYearElement.value = document.getElementById('toFilter').innerHTML
-            visibilityOn('YearBlock')
-        }
-
-        presetFilters();
-    });
-
-    function presetFilters() {
-
-    }
-
-    function visibilityOn(id) {
-        console.log(id)
-        var x = document.getElementById(id);
-        console.log(x === null)
-        x.style.display = "block"
-    }
-
-    function visibilityOFF(id) {
-        var x = document.getElementById(id);
-        x.style.display = "none"
-    }
-
-    var radios = document.querySelectorAll('input[type=radio][name="filter"]');
-
-    function changeHandler(event) {
-        for (const radioButton of radios) {
-            visibilityOFF(radioButton.id + "Block")
-        }
-        if (this.checked) {
-            visibilityOn(this.id + "Block");
-        }
-    }
-
-    Array.prototype.forEach.call(radios, function(radio) {
-        radio.addEventListener('change', changeHandler);
-    });
-
-    const btn = document.querySelector('#searchBtn');
-
-    btn.addEventListener("click", function() {
-        if (document.getElementById("None").checked) {
-            window.location.href = "/Player/GetPlayers";
-        } else if (document.getElementById("Position").checked) {
-            console.log(document.getElementById("position"));
-            window.location.href = "/Player/GetPlayersByPosition/" + document.getElementById("position").value;
-        } else if (document.getElementById("Year").checked) {
-            let fromSegment = document.getElementById("from").value
-            if (fromSegment === undefined) {
-                fromSegment = "null"
-            }
-            let toSegment = document.getElementById("to").value
-            if (toSegment === undefined) {
-                toSegment = "null"
-            }
-            window.location.href = "/Player/GetPlayersByYearOfBirth/" + fromSegment + "/" + toSegment;
-        }
-        //window.location.href = "/Home/Index";
-    });
 
     var editButtons = document.querySelectorAll('button[name="editButton"]');
 
@@ -285,22 +282,17 @@
     btnSubmit.addEventListener("click", function() {
         console.log('clicked');
         var inputDate = document.getElementById('BirthdayInput').value.substring(0, 4);
-        var from = document.getElementById('from').value;
-        var to = document.getElementById('to').value;
+        var from = parseInt(document.getElementById('FromInput').value);
+        var to = parseInt(document.getElementById('ToInput').value);
 
-        var url = window.location.href;
-        var segments = url.split("/");
-        console.log(segments[6])
-        console.log(segments[5]);
+        console.log(inputDate);
+        console.log(from);
+        console.log(to);
 
-        if (segments[4] === 'GetPlayersByYearOfBirth') {
-            if (segments[5] > inputDate || segments[6] < inputDate) {
-                alert('Invalid year of birth value!');
-            } else {
-                console.log('submitting');
-                document.getElementById('formEdit').submit();
-            }
-        } else {
+        if (inputDate > to || inputDate < from) {
+            alert('Invalid year of birth value!');
+        }
+        else {
             document.getElementById('formEdit').submit();
         }
     });

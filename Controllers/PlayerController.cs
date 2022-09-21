@@ -25,7 +25,7 @@ namespace Lab1Test.Controllers
         public async Task<IActionResult> GetPlayersByPosition(Position position)
         {
             var players = await _rosterRepository.GetPlayersByPosition(position);
-            return View("GetPlayers", new PlayersViewModel() { Players = players, SortType = SortType.Position, Position = position });
+            return View("GetPlayers", new PlayersViewModel() { Players = players, Position = position });
         }
 
         [HttpGet]
@@ -33,15 +33,22 @@ namespace Lab1Test.Controllers
         public async Task<IActionResult> GetPlayersByYearOfBirth(int? from, int? to)
         {
             var players = await _rosterRepository.GetPlayersByYearOfBirth(from, to);
-            return View("GetPlayers", new PlayersViewModel() { Players = players, SortType = SortType.YearOfBirth, From = from, To = to });
+            return View("GetPlayers", new PlayersViewModel() { Players = players, From = from, To = to });
         }
 
         [HttpPost]
         public async Task<IActionResult> EditPlayer(EditPlayerModel model)
         {
             await _rosterRepository.Update(model.PlayerId, model.Birthday, model.Birthcity, model.Birthstate);
-            var players = await _rosterRepository.GetPlayers();
-            return View("GetPlayers", new PlayersViewModel() { Players = players, SortType = SortType.YearOfBirth });
+            var players = await _rosterRepository.GetFilteredPlayersAsync(new FilterQuery() { From = model.From, To = model.To, Position = model.Position });
+            return View("GetPlayers", new PlayersViewModel() { Players = players, Position = model.Position, To = model.To, From = model.From });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetFilteredPlayers(PlayersViewModel model)
+        {
+            var players = await _rosterRepository.GetFilteredPlayersAsync(new FilterQuery() { From = model.From, To = model.To, Position = model.Position }) ;
+            return View("GetPlayers", new PlayersViewModel() { Players = players, From = model.From, To = model.To, Position = model.Position });
         }
     }
 }
