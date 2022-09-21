@@ -40,8 +40,12 @@ namespace Lab1Test.Controllers
         public async Task<IActionResult> EditPlayer(EditPlayerModel model)
         {
             await _rosterRepository.Update(model.PlayerId, model.Birthday, model.Birthcity, model.Birthstate);
-            var players = await _rosterRepository.GetFilteredPlayersAsync(new FilterQuery() { From = model.From, To = model.To, Position = model.Position });
-            return View("GetPlayers", new PlayersViewModel() { Players = players, Position = model.Position, To = model.To, From = model.From });
+
+            string queryFrom = model.From == null ? string.Empty : model.From.Value.ToString();
+            string queryTo = model.To == null ? string.Empty : model.To.Value.ToString();
+            string queryPosition = model.Position == null ? string.Empty : model.Position.Value.ToString();
+
+            return LocalRedirect($"/Player/GetFilteredPlayers?Position={queryPosition}&From={queryFrom}&To={queryTo}");
         }
 
         [HttpGet]

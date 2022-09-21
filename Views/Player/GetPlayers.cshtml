@@ -3,7 +3,11 @@
 <style>
 
     td {
-        min-width: 100px;
+        min-width: 90px;
+    }
+
+    .form {
+        width: 400px;
     }
 
     div.block {
@@ -12,6 +16,11 @@
 
     div.block-small {
         margin-bottom: 10px;
+    }
+
+    .form-button{
+        margin-left: 30px;
+        margin-bottom: 30px;
     }
 
     body {
@@ -27,40 +36,21 @@
         display: none;
         position: fixed;
         bottom: 0;
-        right: 15px;
-        border: 3px solid #f1f1f1;
+        right: 0px;
         z-index: 9;
+        width: 400px;
+        border: solid #f2f2f2;
+        border-radius: 10px;
+        background-color: white;
     }
 
     /* Add styles to the form container */
     .form-container {
-        max-width: 500px;
-        padding: 5px;
-        background-color: white;
+        
+        padding: 30px;
+
+
     }
-
-        /* Full-width input fields */
-        .form-container input[type=text], .form-container input[type=password] {
-            width: 100%;
-        }
-
-            /* When the inputs get focus, do something */
-            .form-container input[type=text]:focus, .form-container input[type=password]:focus {
-                background-color: #ddd;
-                outline: none;
-            }
-
-        /* Set a style for the submit/login button */
-
-        /* Add a red background color to the cancel button */
-        .form-container .cancel {
-            background-color: red;
-        }
-
-        /* Add some hover effects to buttons */
-        .form-container .btn:hover, .open-button:hover {
-            opacity: 1;
-        }
 </style>
 
 @{
@@ -96,7 +86,7 @@
                 Selected = @Model.Position == Lab1Test.EF.Position.G,
             });
 }
-<div width="50%">
+<div class="form">
     <form id="formFilter" method="get" asp-controller="Player" asp-action="GetFilteredPlayers">
         <div class="block">
             <label><b>Position</b></label>
@@ -111,7 +101,7 @@
                 <label for="From"><b>From</b></label>
             </div>
 
-            <input type="number" name="From" value="@Model.From" class="form-control" size="20" placeholder="From">
+            <input type="number" name="From" value="@Model.From" class="form-control" size="20" placeholder="From year of birth">
         </div>
 
         <div class="block">
@@ -119,7 +109,7 @@
                 <label for="To"><b>To</b></label>
             </div>
 
-            <input type="number" name="To" value="@Model.To" class="form-control" placeholder="To">
+            <input type="number" name="To" value="@Model.To" class="form-control" placeholder="To year of birth">
         </div>
         <div class="block">
             <input type="submit" value="Search" class="btn btn-primary" />
@@ -160,7 +150,7 @@
                     <td name="@player.Playerid">@player.Fname</td>
                     <td name="@player.Playerid">@player.Sname</td>
                     <td name="@player.Playerid">@player.Position</td>
-                    <td name="@player.Playerid">@String.Format("{0:MM/dd/yyyy}", player.Birthday)</td>
+                    <td name="@player.Playerid">@String.Format("{0:yyyy-MM-dd}", player.Birthday)</td>
                     <td name="@player.Playerid">@player.Weight</td>
                     <td name="@player.Playerid">@player.Height</td>
                     <td name="@player.Playerid">@player.Birthcity</td>
@@ -239,8 +229,8 @@
 
 
     </form>
-    <button id="submitButton" class="btn btn-primary">Save</button>
-    <button onclick="cancelEdit()" class="btn btn-primary">Cancel</button>
+    <button id="submitButton" class="btn btn-primary form-button">Save</button>
+    <button onclick="cancelEdit()" class="btn btn-primary form-button">Cancel</button>
 </div>
 
 
@@ -281,15 +271,19 @@
 
     btnSubmit.addEventListener("click", function() {
         console.log('clicked');
-        var inputDate = document.getElementById('BirthdayInput').value.substring(0, 4);
+        var inputDate = parseInt(document.getElementById('BirthdayInput').value.substring(0, 4));
         var from = parseInt(document.getElementById('FromInput').value);
         var to = parseInt(document.getElementById('ToInput').value);
 
         console.log(inputDate);
         console.log(from);
         console.log(to);
+        if (isNaN(inputDate)) {
+            alert('Birth year is required!');
+            return;
+        }
 
-        if (inputDate > to || inputDate < from) {
+        if ((!isNaN(to) && inputDate > to) || (!isNaN(from) && inputDate < from)) {
             alert('Invalid year of birth value!');
         }
         else {
